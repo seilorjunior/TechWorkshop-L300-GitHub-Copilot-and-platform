@@ -1,11 +1,11 @@
 ---
-title: 'Exercise 02: Implement Infrastructure with Copilot'
+title: 'Exercise 02: Implement infrastructure with Copilot'
 layout: default
 nav_order: 3
 has_children: true
 ---
 
-# Exercise 02: Implement Infrastructure with Copilot
+# Exercise 02: Implement infrastructure with Copilot
 
 ## Scenario
 

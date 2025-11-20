@@ -1,11 +1,11 @@
 ---
-title: 'Exercise 03: Build and Deploy a GitHub Actions CI/CD Pipeline'
+title: 'Exercise 03: Build and deploy a GitHub Actions CI/CD pipeline'
 layout: default
 nav_order: 4
 has_children: true
 ---
 
-# Exercise 03: Build and Deploy a GitHub Actions CI/CD Pipeline
+# Exercise 03: Build and deploy a GitHub Actions CI/CD pipeline
 
 ## Scenario
 

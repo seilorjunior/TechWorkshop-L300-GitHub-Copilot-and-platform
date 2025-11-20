@@ -1,11 +1,11 @@
 ---
-title: 'Exercise 06: AI Governance and Model Observability'
+title: 'Exercise 06: AI governance and model observability'
 layout: default
 nav_order: 7
 has_children: true
 ---
 
-# Exercise 06: AI Governance and Model Observability
+# Exercise 06: AI governance and model observability
 
 ## Scenario
 
