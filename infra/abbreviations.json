@@ -1,0 +1,8 @@
+{
+  "resourcesResourceGroups": "rg-",
+  "containerRegistryRegistries": "cr",
+  "insightsComponents": "appi-",
+  "webServerFarms": "plan-",
+  "webSitesAppService": "app-",
+  "cognitiveServicesAccounts": "cog-"
+}
