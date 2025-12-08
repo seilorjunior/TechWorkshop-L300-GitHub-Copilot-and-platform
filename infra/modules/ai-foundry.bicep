@@ -15,6 +15,18 @@ param sku object = {
 @description('Kind of Cognitive Services account')
 param kind string = 'AIServices'
 
+@description('Deploy GPT-4 model')
+param deployGpt4 bool = true
+
+@description('GPT-4 model version')
+param gpt4Version string = '1106-Preview'
+
+@description('Deploy Phi-3 model')
+param deployPhi3 bool = true
+
+@description('Phi-3 model version')
+param phi3Version string = 'mini-4k-instruct'
+
 resource cognitiveService 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   name: name
   location: location
@@ -30,8 +42,8 @@ resource cognitiveService 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   }
 }
 
-// Deploy GPT-4 model
-resource gpt4Deployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
+// Deploy GPT-4 model (conditional)
+resource gpt4Deployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = if (deployGpt4) {
   parent: cognitiveService
   name: 'gpt-4'
   sku: {
@@ -42,13 +54,13 @@ resource gpt4Deployment 'Microsoft.CognitiveServices/accounts/deployments@2023-0
     model: {
       format: 'OpenAI'
       name: 'gpt-4'
-      version: '0613'
+      version: gpt4Version
     }
   }
 }
 
-// Deploy Phi model (if available in westus3)
-resource phiDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
+// Deploy Phi-3 model (conditional)
+resource phiDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = if (deployPhi3) {
   parent: cognitiveService
   name: 'phi-3'
   sku: {
@@ -59,7 +71,7 @@ resource phiDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05
     model: {
       format: 'OpenAI'
       name: 'phi-3'
-      version: 'latest'
+      version: phi3Version
     }
   }
   dependsOn: [

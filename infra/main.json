@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.39.26.7824",
-      "templateHash": "9501805913606678447"
+      "templateHash": "3920166254461798188"
     }
   },
   "parameters": {
@@ -619,7 +619,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.39.26.7824",
-              "templateHash": "16059822524574786914"
+              "templateHash": "4588825287404884093"
             }
           },
           "parameters": {
@@ -658,6 +658,34 @@
               "metadata": {
                 "description": "Kind of Cognitive Services account"
               }
+            },
+            "deployGpt4": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Deploy GPT-4 model"
+              }
+            },
+            "gpt4Version": {
+              "type": "string",
+              "defaultValue": "1106-Preview",
+              "metadata": {
+                "description": "GPT-4 model version"
+              }
+            },
+            "deployPhi3": {
+              "type": "bool",
+              "defaultValue": true,
+              "metadata": {
+                "description": "Deploy Phi-3 model"
+              }
+            },
+            "phi3Version": {
+              "type": "string",
+              "defaultValue": "mini-4k-instruct",
+              "metadata": {
+                "description": "Phi-3 model version"
+              }
             }
           },
           "resources": [
@@ -678,6 +706,7 @@
               }
             },
             {
+              "condition": "[parameters('deployGpt4')]",
               "type": "Microsoft.CognitiveServices/accounts/deployments",
               "apiVersion": "2023-05-01",
               "name": "[format('{0}/{1}', parameters('name'), 'gpt-4')]",
@@ -689,7 +718,7 @@
                 "model": {
                   "format": "OpenAI",
                   "name": "gpt-4",
-                  "version": "0613"
+                  "version": "[parameters('gpt4Version')]"
                 }
               },
               "dependsOn": [
@@ -697,6 +726,7 @@
               ]
             },
             {
+              "condition": "[parameters('deployPhi3')]",
               "type": "Microsoft.CognitiveServices/accounts/deployments",
               "apiVersion": "2023-05-01",
               "name": "[format('{0}/{1}', parameters('name'), 'phi-3')]",
@@ -708,7 +738,7 @@
                 "model": {
                   "format": "OpenAI",
                   "name": "phi-3",
-                  "version": "latest"
+                  "version": "[parameters('phi3Version')]"
                 }
               },
               "dependsOn": [
