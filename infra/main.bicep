@@ -9,9 +9,6 @@ param environmentName string
 @description('Primary location for all resources')
 param location string = 'westus3'
 
-@description('Id of the user or app to assign application roles')
-param principalId string = ''
-
 @description('Tags to apply to all resources')
 param tags object = {}
 

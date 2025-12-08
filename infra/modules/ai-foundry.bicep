@@ -70,4 +70,3 @@ resource phiDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05
 output id string = cognitiveService.id
 output name string = cognitiveService.name
 output endpoint string = cognitiveService.properties.endpoint
-output key string = cognitiveService.listKeys().key1
