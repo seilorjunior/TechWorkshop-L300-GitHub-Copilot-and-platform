@@ -195,8 +195,9 @@ infra/
 
 #### `ai-foundry.bicep`
 - Creates Azure AI Services account
-- Deploys GPT-4 model (0613 version)
-- Deploys Phi-3 model (latest version)
+- Deploys GPT-4 model (1106-Preview version)
+- Deploys Phi-3 model (mini-4k-instruct version)
+- Model deployments are optional and parameterized
 - Note: Model availability depends on region capacity
 
 ## Configuration
