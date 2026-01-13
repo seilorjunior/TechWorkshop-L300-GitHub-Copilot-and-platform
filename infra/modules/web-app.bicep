@@ -27,6 +27,9 @@ param applicationInsightsConnectionString string
 @description('Application Insights instrumentation key')
 param applicationInsightsInstrumentationKey string
 
+@description('Azure AI Services endpoint')
+param aiServicesEndpoint string = ''
+
 @description('Docker image and tag')
 param dockerImageAndTag string = 'mcr.microsoft.com/appsvc/staticsite:latest'
 
@@ -83,6 +86,10 @@ resource webApp 'Microsoft.Web/sites@2023-12-01' = {
         {
           name: 'ASPNETCORE_ENVIRONMENT'
           value: 'Production'
+        }
+        {
+          name: 'AzureAI__Endpoint'
+          value: aiServicesEndpoint
         }
       ]
     }
