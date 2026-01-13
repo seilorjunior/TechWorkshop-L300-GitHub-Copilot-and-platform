@@ -12,10 +12,6 @@ on:
         default: 'dev'
         type: string
 
-permissions:
-  id-token: write
-  contents: read
-
 env:
   AZURE_LOCATION: westus3
 
@@ -34,12 +30,10 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Azure Developer CLI Login
-        run: azd auth login --client-id ${{ secrets.AZURE_CLIENT_ID }} --federated-credential-provider github --tenant-id ${{ secrets.AZURE_TENANT_ID }}
+        run: azd auth login --client-id ${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }} --client-secret ${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }} --tenant-id ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
 
       - name: Provision Infrastructure
         run: |
