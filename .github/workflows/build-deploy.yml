@@ -32,7 +32,7 @@ jobs:
         id: azure-resources
         run: |
           # Get resource group name
-          RG_NAME="rg-${{ env.AZURE_ENV_NAME }}"
+          RG_NAME="rg-zava"
           echo "resource_group=$RG_NAME" >> $GITHUB_OUTPUT
           
           # Get ACR name from resource group

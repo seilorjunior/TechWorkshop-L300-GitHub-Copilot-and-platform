@@ -23,7 +23,7 @@ jobs:
       - name: Get resource names
         id: resources
         run: |
-          RG="rg-${{ env.AZURE_ENV_NAME }}"
+          RG="rg-zava"
           echo "acr=$(az acr list -g $RG --query '[0].name' -o tsv)" >> $GITHUB_OUTPUT
           echo "webapp=$(az webapp list -g $RG --query '[0].name' -o tsv)" >> $GITHUB_OUTPUT
           echo "rg=$RG" >> $GITHUB_OUTPUT
