@@ -1,0 +1,50 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+    paths: ['src/**']
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get resource names
+        id: resources
+        run: |
+          RG="rg-${{ env.AZURE_ENV_NAME }}"
+          echo "acr=$(az acr list -g $RG --query '[0].name' -o tsv)" >> $GITHUB_OUTPUT
+          echo "webapp=$(az webapp list -g $RG --query '[0].name' -o tsv)" >> $GITHUB_OUTPUT
+          echo "rg=$RG" >> $GITHUB_OUTPUT
+
+      - name: Build and push image
+        run: |
+          az acr build -r ${{ steps.resources.outputs.acr }} \
+            -t zava-storefront:${{ github.sha }} \
+            -t zava-storefront:latest \
+            -f src/Dockerfile ./src
+
+      - name: Deploy to App Service
+        run: |
+          az webapp config container set \
+            -n ${{ steps.resources.outputs.webapp }} \
+            -g ${{ steps.resources.outputs.rg }} \
+            -i ${{ steps.resources.outputs.acr }}.azurecr.io/zava-storefront:${{ github.sha }}
+          az webapp restart -n ${{ steps.resources.outputs.webapp }} -g ${{ steps.resources.outputs.rg }}
