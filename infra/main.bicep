@@ -147,6 +147,17 @@ module webAppDiagnostics 'modules/diagnostic-settings.bicep' = {
   }
 }
 
+// Diagnostic Settings for AI Services
+module aiServicesDiagnostics 'modules/diagnostic-settings-ai-services.bicep' = {
+  name: 'aiServicesDiagnostics'
+  scope: rg
+  params: {
+    name: 'diag-${abbrs.aiServices}${resourceToken}'
+    aiServicesName: aiServices.outputs.name
+    workspaceId: logAnalytics.outputs.id
+  }
+}
+
 // Outputs
 output RESOURCE_GROUP_ID string = rg.id
 output RESOURCE_GROUP_NAME string = rg.name
