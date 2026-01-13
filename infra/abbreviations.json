@@ -1,0 +1,10 @@
+{
+  "managedIdentity": "id",
+  "logAnalytics": "log",
+  "appInsights": "appi",
+  "containerRegistry": "acr",
+  "appServicePlan": "asp",
+  "webApp": "app",
+  "aiServices": "ais",
+  "keyVault": "kv"
+}

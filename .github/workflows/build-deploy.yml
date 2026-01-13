@@ -1,0 +1,86 @@
+# Build and push Docker image to Azure Container Registry
+# This workflow builds the container image in the cloud using ACR Tasks (no local Docker required)
+
+name: Build and Deploy to Azure
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - '.github/workflows/build-deploy.yml'
+  workflow_dispatch:
+
+env:
+  AZURE_ENV_NAME: ${{ vars.AZURE_ENV_NAME }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get Azure Resources
+        id: azure-resources
+        run: |
+          # Get resource group name
+          RG_NAME="rg-zava"
+          echo "resource_group=$RG_NAME" >> $GITHUB_OUTPUT
+          
+          # Get ACR name from resource group
+          ACR_NAME=$(az acr list --resource-group $RG_NAME --query "[0].name" -o tsv)
+          echo "acr_name=$ACR_NAME" >> $GITHUB_OUTPUT
+          
+          # Get Web App name from resource group
+          WEBAPP_NAME=$(az webapp list --resource-group $RG_NAME --query "[0].name" -o tsv)
+          echo "webapp_name=$WEBAPP_NAME" >> $GITHUB_OUTPUT
+
+      - name: Build image using ACR Tasks (cloud build)
+        run: |
+          # Build container image in the cloud using ACR Tasks
+          # No local Docker required!
+          IMAGE_TAG="${{ steps.azure-resources.outputs.acr_name }}.azurecr.io/zava-storefront:${{ github.sha }}"
+          
+          az acr build \
+            --registry ${{ steps.azure-resources.outputs.acr_name }} \
+            --image zava-storefront:${{ github.sha }} \
+            --image zava-storefront:latest \
+            --file src/Dockerfile \
+            ./src
+
+      - name: Deploy to Azure Web App
+        run: |
+          # Update Web App to use the new image
+          IMAGE="${{ steps.azure-resources.outputs.acr_name }}.azurecr.io/zava-storefront:${{ github.sha }}"
+          
+          az webapp config container set \
+            --name ${{ steps.azure-resources.outputs.webapp_name }} \
+            --resource-group ${{ steps.azure-resources.outputs.resource_group }} \
+            --docker-custom-image-name $IMAGE
+
+      - name: Restart Web App
+        run: |
+          az webapp restart \
+            --name ${{ steps.azure-resources.outputs.webapp_name }} \
+            --resource-group ${{ steps.azure-resources.outputs.resource_group }}
+
+      - name: Output deployment info
+        run: |
+          WEBAPP_URL=$(az webapp show \
+            --name ${{ steps.azure-resources.outputs.webapp_name }} \
+            --resource-group ${{ steps.azure-resources.outputs.resource_group }} \
+            --query "defaultHostName" -o tsv)
+          
+          echo "## Deployment Successful! 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Application URL:** https://$WEBAPP_URL" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** ${{ steps.azure-resources.outputs.acr_name }}.azurecr.io/zava-storefront:${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
