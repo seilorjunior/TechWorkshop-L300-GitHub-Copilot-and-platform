@@ -111,6 +111,7 @@ module webApp 'modules/web-app.bicep' = {
     containerRegistryName: containerRegistry.outputs.name
     applicationInsightsConnectionString: applicationInsights.outputs.connectionString
     applicationInsightsInstrumentationKey: applicationInsights.outputs.instrumentationKey
+    aiServicesEndpoint: aiServices.outputs.endpoint
   }
 }
 
@@ -133,6 +134,17 @@ module aiServices 'modules/ai-services.bicep' = {
     name: '${abbrs.aiServices}${resourceToken}'
     location: location
     tags: tags
+  }
+}
+
+// AI Services Role Assignment for Managed Identity
+module aiServicesRoleAssignment 'modules/role-assignment-ai-services.bicep' = {
+  name: 'aiServicesRoleAssignment'
+  scope: rg
+  params: {
+    aiServicesName: aiServices.outputs.name
+    principalId: userAssignedIdentity.outputs.principalId
+    principalType: 'ServicePrincipal'
   }
 }
 
